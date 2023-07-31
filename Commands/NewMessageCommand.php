@@ -25,10 +25,10 @@ class NewMessageCommand extends SystemCommand
             $chat_id = $callback_query->getMessage()->getChat()->getId();
         } else {
             $chat_id = $message->getChat()->getId();
-        }
 
-        // Primero, comprobamos si el mensaje es una respuesta a un mensaje anterior
-        $reply_to_message = $message->getReplyToMessage();
+            // Primero, comprobamos si el mensaje es una respuesta a un mensaje anterior
+            $reply_to_message = $message->getReplyToMessage();
+        }
 
         if ($reply_to_message && $reply_to_message->getText() === 'Por favor, introduzca el mensaje que quiere guardar:') {
             // El mensaje es una respuesta. Procesamos el texto del mensaje y lo guardamos en la base de datos
