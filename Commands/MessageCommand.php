@@ -14,7 +14,7 @@ class MessageCommand extends SystemCommand
     protected $usage = '/message';
     protected $version = '1.0.0';
 
-    public function execute()
+    public function execute(): Longman\TelegramBot\Entities\ServerResponse
     {
         $message = $this->getMessage();
         $text    = trim($message->getText(true));
