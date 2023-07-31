@@ -14,7 +14,7 @@ class NewMessageCommand extends SystemCommand
     protected $usage = '/newmessage';
     protected $version = '1.0.0';
 
-    public function execute()
+    public function execute(): Longman\TelegramBot\Entities\ServerResponse
     {
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();
