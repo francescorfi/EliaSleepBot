@@ -18,7 +18,14 @@ class NewMessageCommand extends SystemCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $chat_id = $message->getChat()->getId();
+        $callback_query = $this->getCallbackQuery();
+    
+        // Comprobar si la consulta de devolución de llamada está disponible
+        if ($callback_query) {
+            $chat_id = $callback_query->getMessage()->getChat()->getId();
+        } else {
+            $chat_id = $message->getChat()->getId();
+        }
 
         // Primero, comprobamos si el mensaje es una respuesta a un mensaje anterior
         $reply_to_message = $message->getReplyToMessage();
