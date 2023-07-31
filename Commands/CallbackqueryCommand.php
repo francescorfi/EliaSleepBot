@@ -66,5 +66,12 @@ class CallbackqueryCommand extends SystemCommand
                 }
                 break;
         }
+
+        $data = [
+            'chat_id' => $chat_id,
+            'text'    => 'FIN',
+        ];
+
+        return Request::sendMessage($data);
     }    
 }
