@@ -3,6 +3,7 @@ namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use mysqli;
 
@@ -12,7 +13,7 @@ class CallbackqueryCommand extends SystemCommand
     protected $description = 'Handle callback queries';
     protected $version = '1.0.0';
 
-    public function execute(): Longman\TelegramBot\Entities\ServerResponse
+    public function execute(): ServerResponse
     {
         $callback_query = $this->getCallbackQuery();
         $callback_query_id = $callback_query->getId();

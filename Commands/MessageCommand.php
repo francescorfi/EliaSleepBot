@@ -3,6 +3,7 @@
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 
 use mysqli;
@@ -14,7 +15,7 @@ class MessageCommand extends SystemCommand
     protected $usage = '/message';
     protected $version = '1.0.0';
 
-    public function execute(): Longman\TelegramBot\Entities\ServerResponse
+    public function execute(): ServerResponse
     {
         $message = $this->getMessage();
         $text    = trim($message->getText(true));
