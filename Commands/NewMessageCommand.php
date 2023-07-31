@@ -5,6 +5,8 @@ use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\ForceReply;
 use Longman\TelegramBot\Request;
 
+use mysqli;
+
 class NewMessageCommand extends SystemCommand
 {
     protected $name = 'newmessage';

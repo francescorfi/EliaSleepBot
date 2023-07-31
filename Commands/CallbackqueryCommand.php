@@ -4,6 +4,7 @@ namespace Longman\TelegramBot\Commands\SystemCommands;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Request;
+use mysqli;
 
 class CallbackqueryCommand extends SystemCommand
 {
@@ -19,27 +20,50 @@ class CallbackqueryCommand extends SystemCommand
 
         $message = $callback_query->getMessage();
         $chat_id = $message->getChat()->getId();
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-        if (strpos($callback_data, 'edit_') === 0) {
-            $message_id = substr($callback_data, 5);
-            // Aquí puedes solicitar el nuevo mensaje y actualizar la base de datos.
-        } else if (strpos($callback_data, 'delete_') === 0) {
-            $message_id = substr($callback_data, 7);
-            $stmt = $mysqli->prepare("DELETE FROM messages WHERE id = ? AND chat_id = ?");
-            $stmt->bind_param('si', $message_id, $chat_id);
-            $stmt->execute();
-            $stmt->close();
+        // Manejo de los comandos configurados en el teclado inline
+        switch ($callback_data) {
+            case 'command_new_message':
+                $this->getTelegram()->executeCommand('newmessage');
+                break;
+            case 'command_edit_message':
+                $this->getTelegram()->executeCommand('editmessage');
+                break;
+            default:
+                if (strpos($callback_data, 'edit_') === 0) {
+                    $message_id = substr($callback_data, 5);
+            
+                    // Guardar el estado en la base de datos (en este ejemplo, lo guardamos en una nueva tabla llamada 'user_state')
+                    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+                    $stmt = $mysqli->prepare("INSERT INTO user_state (chat_id, state, message_id) VALUES (?, 'awaiting_new_message', ?)");
+                    $stmt->bind_param('ii', $chat_id, $message_id);
+                    $stmt->execute();
+                    $stmt->close();
+                    $mysqli->close();
+                
+                    // Enviar un mensaje al usuario pidiendo el nuevo mensaje
+                    $data = [
+                        'chat_id' => $chat_id,
+                        'text'    => 'Por favor, escribe el nuevo mensaje',
+                    ];
+                    return Request::sendMessage($data);
+                } else if (strpos($callback_data, 'delete_') === 0) {
+                    $message_id = substr($callback_data, 7);
+                    $stmt = $mysqli->prepare("DELETE FROM messages WHERE id = ? AND chat_id = ?");
+                    $stmt->bind_param('si', $message_id, $chat_id);
+                    $stmt->execute();
+                    $stmt->close();
+                    $mysqli->close();
+                
+                    $data = [
+                        'callback_query_id' => $callback_query_id,
+                        'text'              => 'Mensaje eliminado con éxito',
+                        'show_alert'        => true,  // Mostrar un alerta en lugar de una notificación.
+                    ];
+                    
+                    return Request::answerCallbackQuery($data);
+                }
+                break;
         }
-
-        $mysqli->close();
-
-        $data = [
-            'callback_query_id' => $callback_query_id,
-            'text'              => 'Mensaje actualizado o eliminado con éxito',
-            'show_alert'        => true,  // Mostrar un alerta en lugar de una notificación.
-        ];
-
-        return Request::answerCallbackQuery($data);
     }
 }

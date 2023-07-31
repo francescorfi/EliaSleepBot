@@ -4,11 +4,10 @@ require 'config.php';
 
 use Longman\TelegramBot\Telegram;
 use Longman\TelegramBot\TelegramLog;
-use Longman\TelegramBot\Entities\CallbackQuery;
+use Longman\TelegramBot\Entities\Update;
 use Longman\TelegramBot\Exception\TelegramException;
 
-use Longman\TelegramBot\Commands\SystemCommands\NewMessageCommand;
-use Longman\TelegramBot\Commands\SystemCommands\EditMessageCommand;
+use Commands\MessageCommand;
 
 try {
     // Create Telegram API object
@@ -20,23 +19,15 @@ try {
     // Handle telegram webhook request
     $telegram->handle();
 
-    // Manejo de callback queries
-    if ($result instanceof CallbackQuery) {
-        $callback_query = $result;
-        $callback_data = $callback_query->getData();
+    // Get the update object
+    $update = $telegram->getWebhookUpdate();
 
-        // Manejo de los comandos configurados en el teclado inline
-        switch ($callback_data) {
-            case 'command_new_message':
-                $telegram->executeCommand('newmessage');
-                break;
-            case 'command_edit_message':
-                $telegram->executeCommand('editmessage');
-                break;
-            default:
-                $telegram->executeCommand('callbackquery');
-                break;
-        }
+    // Check if the update contains a text message
+    if ($update->getMessage() && !$update->getMessage()->isCommand()) {
+        // Instantiate and execute the MessageCommand
+        $command = new MessageCommand($telegram, $update);
+        $command->preExecute();
+        $command->execute();
     }
 
 } catch (TelegramException $e) {

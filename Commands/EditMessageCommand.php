@@ -5,6 +5,8 @@ use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Entities\InlineKeyboard;
 use Longman\TelegramBot\Request;
 
+use mysqli;
+
 class EditMessageCommand extends SystemCommand
 {
     protected $name = 'editmessage';
