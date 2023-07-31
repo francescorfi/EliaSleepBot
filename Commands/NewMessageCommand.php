@@ -2,7 +2,7 @@
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
-use Longman\TelegramBot\Entities\ForceReply;
+use Longman\TelegramBot\Entities\Keyboard;
 use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 
@@ -63,7 +63,7 @@ class NewMessageCommand extends SystemCommand
             $data = [
                 'chat_id'      => $chat_id,
                 'text'         => 'Por favor, introduzca el mensaje que quiere guardar:',
-                'reply_markup' => new ForceReply(['selective' => true]),
+                'reply_markup' => new Keyboard(['force_reply' => true, 'selective' => true]),
             ];
         }
 
