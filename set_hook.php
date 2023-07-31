@@ -18,5 +18,4 @@ try {
 } catch (TelegramException $e) {
     // Log telegram errors
     TelegramLog::error($e);
-    echo $e;
 }
