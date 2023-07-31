@@ -1,0 +1,14 @@
+# Ignora el directorio de vendor, donde Composer instala las dependencias
+/vendor/
+
+# Ignora el archivo .env, que podría contener información sensible
+/.env
+
+# Ignora los archivos de caché
+*.cache
+
+# Ignora los archivos de logs
+*.log
+
+# Ignora el archivo de configuración de la base de datos
+/config.php
