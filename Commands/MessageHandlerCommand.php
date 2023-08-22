@@ -4,6 +4,8 @@ namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Request;
+use Longman\TelegramBot\TelegramLog;
+use Longman\TelegramBot\Exception\TelegramException;
 
 class MessageHandlerCommand extends SystemCommand
 {
@@ -12,14 +14,18 @@ class MessageHandlerCommand extends SystemCommand
 
     public function execute()
     {
-        $message = $this->getMessage();
-        $text    = $message->getText();
-        $chat_id = $message->getChat()->getId();
 
-        $data = ['chat_id' => $chat_id];
-        $data['text'] = 'Mensaje: ' . $message;
+        try {
+            $message = $this->getMessage();
+            $text    = $message->getText();
+            $chat_id = $message->getChat()->getId();
+    
+            $data = ['chat_id' => $chat_id];
+            $data['text'] = 'Mensaje: ' . $message;
+    
+            return Request::sendMessage($data);
+        
 
-        return Request::sendMessage($data);
 
         // Conectar usando mysqli
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -60,5 +66,10 @@ class MessageHandlerCommand extends SystemCommand
         $mysqli->close();
 
         return Request::emptyResponse();
+
+        } catch (TelegramException $e) {
+            // Log telegram errors
+            TelegramLog::error($e);
+        }
     }
 }
