@@ -48,6 +48,7 @@ class GenericCommand extends SystemCommand
     {
         $message = $this->getMessage();
         $user_id = $message->getFrom()->getId();
+        $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
 
         // To enable proper use of the /whois command.
@@ -56,6 +57,7 @@ class GenericCommand extends SystemCommand
             return $this->telegram->executeCommand('whois');
         }
 
-        return $this->replyToChat("Command /{$command} not found.. :(");
+        return $this->replyToChat("Mensaje");
+
     }
 }
