@@ -4,6 +4,7 @@ namespace Longman\TelegramBot\Commands\SystemCommands;
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Entities\ServerResponse;
+use Longman\TelegramBot\TelegramLog;
 
 class StartCommand extends SystemCommand
 {
@@ -14,6 +15,7 @@ class StartCommand extends SystemCommand
 
     public function execute(): ServerResponse
     {
+        TelegramLog::error("StartCommand is being executed!");
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();
         $chat_type = $message->getChat()->getType();
