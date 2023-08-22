@@ -69,11 +69,16 @@ class GenericCommand extends SystemCommand
         $stmt->execute();
         $stmt->bind_result($message_id);
         $stmt->fetch();
-
+        
         if ($message_id) {
             $insertStmt = $mysqli->prepare("INSERT INTO events (chat_id, message_id) VALUES (?, ?)");
+            if (!$insertStmt) {
+                // Aquí podrías registrar o devolver el error
+                return $this->replyToChat("Error en la preparación del INSERT: " . $mysqli->error);
+            }
             $insertStmt->bind_param('ss', $chat_id, $message_id);
             $insertStmt->execute();
+            $insertStmt->close();
         }
 
         $stmt->close();
