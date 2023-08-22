@@ -16,8 +16,12 @@ class MessageHandlerCommand extends SystemCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $text    = $message->getText();
+        $text    = $message->getText(true);
         $chat_id = $message->getChat()->getId();
+        $data = ['chat_id' => $chat_id];
+        $data['text'] = 'Mensaje: '. $text;
+
+        return Request::sendMessage($data);
 
         // Conectar usando mysqli
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
