@@ -69,7 +69,9 @@ class GenericCommand extends SystemCommand
         $stmt->execute();
         $stmt->bind_result($message_id);
         $stmt->fetch();
-        
+        $stmt->free_result();  // Liberar el resultado.
+        $stmt->close();
+
         if ($message_id) {
             $insertStmt = $mysqli->prepare("INSERT INTO events (chat_id, message_id) VALUES (?, ?)");
             if (!$insertStmt) {
