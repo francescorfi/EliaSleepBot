@@ -47,14 +47,26 @@ class GenericCommand extends SystemCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $user_id = $message->getFrom()->getId();
+        $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
 
-        // To enable proper use of the /whois command.
-        // If the user is an admin and the command is in the format "/whoisXYZ", call the /whois command
-        if (stripos($command, 'whois') === 0 && $this->telegram->isAdmin($user_id)) {
-            return $this->telegram->executeCommand('whois');
+        // Conectar usando mysqli
+        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // Si el mensaje es un comando
+        $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
+        $stmt->bind_param('s', '/' . $command);
+        $stmt->execute();
+        $stmt->bind_result($message_id);
+        $stmt->fetch();
+
+        if ($message_id) {
+            $insertStmt = $mysqli->prepare("INSERT INTO events (chat_id, message_id) VALUES (?, ?)");
+            $insertStmt->bind_param('ss', $chat_id, $message_id);
+            $insertStmt->execute();
         }
+        
+        $stmt->close();
 
         return $this->replyToChat("Command /{$command} not found.. :(");
     }

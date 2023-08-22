@@ -49,6 +49,7 @@ class GenericmessageCommand extends SystemCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
+        $chat_id = $message->getChat()->getId();
 
         /**
          * Handle any kind of message here
@@ -56,6 +57,29 @@ class GenericmessageCommand extends SystemCommand
 
         $text = $message->getText(true);
 
-        return $this->replyToChat("mensaje: " . $text);
+        // Conectar usando mysqli
+        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        if (preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $text)) { // Si el mensaje es una hora
+            $currentDate = new \DateTime();
+            $givenTime = new \DateTime($text);
+            $currentDate->setTime($givenTime->format('H'), $givenTime->format('i'));
+
+            $updateStmt = $mysqli->prepare("UPDATE events SET datetime = ? WHERE chat_id = ? ORDER BY id DESC LIMIT 1");
+            $formattedDate = $currentDate->format('Y-m-d H:i:s');
+            $updateStmt->bind_param('ss', $formattedDate, $chat_id);
+            $updateStmt->execute();
+            $updateStmt->close();
+
+        } else { // En cualquier otro caso, tratamos el mensaje como comentario
+            $updateStmt = $mysqli->prepare("UPDATE events SET comment = ? WHERE chat_id = ? ORDER BY id DESC LIMIT 1");
+            $updateStmt->bind_param('ss', $text, $chat_id);
+            $updateStmt->execute();
+            $updateStmt->close();
+        }
+
+        return $this->replyToChat("Mensaje procesado: " . $text);
+
+        return Request::emptyResponse();
     }
 }
