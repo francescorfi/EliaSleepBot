@@ -52,9 +52,18 @@ class GenericCommand extends SystemCommand
 
         // Conectar usando mysqli
         $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        if ($mysqli->connect_error) {
+            // Aquí podrías registrar o devolver el error
+            return $this->replyToChat("Error de conexión: " . $mysqli->connect_error);
+        }
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
+        if (!$stmt) {
+            // Aquí podrías registrar o devolver el error
+            return $this->replyToChat("Error en la preparación: " . $mysqli->error);
+        }
+
         $commandWithSlash = "/" . $command;
         $stmt->bind_param('s', $commandWithSlash);
         $stmt->execute();
