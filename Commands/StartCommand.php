@@ -2,10 +2,8 @@
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
-use Longman\TelegramBot\Entities\Keyboard;
-use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
-use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\ServerResponse;
 
 class StartCommand extends SystemCommand
 {
@@ -20,17 +18,11 @@ class StartCommand extends SystemCommand
         $chat_id = $message->getChat()->getId();
         $chat_type = $message->getChat()->getType();
         $data = ['chat_id' => $chat_id];
-        $keyboard = new InlineKeyboard([
-            ['text' => 'Crear nuevo mensaje', 'callback_data' => 'command_new_message'],
-            ['text' => 'Editar mensajes existentes', 'callback_data' => 'command_edit_message']
-        ]);
 
         if ($chat_type === 'private') {
             $data['text'] = '¡Hola! Este bot está diseñado para trabajar en grupos. Por favor, añádeme a un grupo para empezar.';
         } else {
-            $data['text'] = '¡Hola, grupo! ¿Qué te gustaría hacer?';
-            $data['reply_markup'] = $keyboard;
-            $data['reply_markup']->setResizeKeyboard(true);
+            $data['text'] = "¡Hola! El ID de este grupo es: $chat_id. Por favor, utilízalo para configurar el grupo en la aplicación.";
         }
 
         return Request::sendMessage($data);
