@@ -16,10 +16,10 @@ class MessageHandlerCommand extends SystemCommand
     public function execute(): ServerResponse
     {
         $message = $this->getMessage();
-        $text    = $message->getText(true);
+        // $text    = $message->getText(true);
         $chat_id = $message->getChat()->getId();
         $data = ['chat_id' => $chat_id];
-        $data['text'] = 'Mensaje: '. $text;
+        $data['text'] = 'Mensaje';
 
         return Request::sendMessage($data);
 
