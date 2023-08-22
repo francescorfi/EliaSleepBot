@@ -15,7 +15,6 @@ class StartCommand extends SystemCommand
 
     public function execute(): ServerResponse
     {
-        TelegramLog::error("StartCommand is being executed!");
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();
         $chat_type = $message->getChat()->getType();
