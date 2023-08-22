@@ -14,6 +14,7 @@ class MessageHandlerCommand extends SystemCommand
 
     public function execute()
     {
+        TelegramLog::error("MessageHandlerCommand is being executed!");
 
         try {
             $message = $this->getMessage();
