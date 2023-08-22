@@ -12,7 +12,7 @@ class MessageHandlerCommand extends SystemCommand
     protected $name = 'messagehandler';
     protected $description = 'Handle group messages';
 
-    public function execute()
+    public function execute(): \Longman\TelegramBot\Entities\ServerResponse
     {
         TelegramLog::error("MessageHandlerCommand is being executed!");
 
