@@ -78,8 +78,6 @@ class GenericmessageCommand extends SystemCommand
             $updateStmt->close();
         }
 
-        return $this->replyToChat("Mensaje procesado: " . $text);
-
         return Request::emptyResponse();
     }
 }

@@ -50,20 +50,14 @@ class GenericCommand extends SystemCommand
         $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
 
+        
+        return $this->replyToChat("Mensaje procesado: " . $command);
+
         // Conectar usando mysqli
         $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        if ($mysqli->connect_error) {
-            // Aquí podrías registrar o devolver el error
-            return $this->replyToChat("Error de conexión: " . $mysqli->connect_error);
-        }
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
-        if (!$stmt) {
-            // Aquí podrías registrar o devolver el error
-            return $this->replyToChat("Error en la preparación: " . $mysqli->error);
-        }
-
         $commandWithSlash = "/" . $command;
         $stmt->bind_param('s', $commandWithSlash);
         $stmt->execute();
@@ -74,17 +68,11 @@ class GenericCommand extends SystemCommand
 
         if ($message_id) {
             $insertStmt = $mysqli->prepare("INSERT INTO events (chat_id, message_id) VALUES (?, ?)");
-            if (!$insertStmt) {
-                // Aquí podrías registrar o devolver el error
-                return $this->replyToChat("Error en la preparación del INSERT: " . $mysqli->error);
-            }
             $insertStmt->bind_param('ss', $chat_id, $message_id);
             $insertStmt->execute();
             $insertStmt->close();
         }
 
-        $stmt->close();
-
-        return $this->replyToChat("Command /{$command} not found.. :(");
+        return Request::emptyResponse();
     }
 }
