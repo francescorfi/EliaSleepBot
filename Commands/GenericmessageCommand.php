@@ -58,7 +58,7 @@ class GenericmessageCommand extends SystemCommand
         $text = $message->getText(true);
 
         // Conectar usando mysqli
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
         if (preg_match("/^(?:2[0-3]|[01][0-9]):[0-5][0-9]$/", $text)) { // Si el mensaje es una hora
             $currentDate = new \DateTime();

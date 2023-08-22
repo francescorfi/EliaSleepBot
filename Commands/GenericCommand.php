@@ -51,7 +51,7 @@ class GenericCommand extends SystemCommand
         $command = $message->getCommand();
 
         // Conectar usando mysqli
-        $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+        $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
@@ -65,7 +65,7 @@ class GenericCommand extends SystemCommand
             $insertStmt->bind_param('ss', $chat_id, $message_id);
             $insertStmt->execute();
         }
-        
+
         $stmt->close();
 
         return $this->replyToChat("Command /{$command} not found.. :(");
