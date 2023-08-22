@@ -3,6 +3,7 @@
 namespace Longman\TelegramBot\Commands\SystemCommands;
 
 use Longman\TelegramBot\Commands\SystemCommand;
+use Longman\TelegramBot\Entities\ServerResponse;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\TelegramLog;
 use Longman\TelegramBot\Exception\TelegramException;
@@ -12,19 +13,16 @@ class MessageHandlerCommand extends SystemCommand
     protected $name = 'messagehandler';
     protected $description = 'Handle group messages';
 
-    public function execute(): \Longman\TelegramBot\Entities\ServerResponse
+    public function execute(): ServerResponse
     {
-        TelegramLog::error("MessageHandlerCommand is being executed!");
+        $message = $this->getMessage();
+        $text    = $message->getText();
+        $chat_id = $message->getChat()->getId();
 
-        try {
-            $message = $this->getMessage();
-            $text    = $message->getText();
-            $chat_id = $message->getChat()->getId();
-    
-            $data = ['chat_id' => $chat_id];
-            $data['text'] = 'Mensaje: ' . $message;
-    
-            return Request::sendMessage($data);
+        $data = ['chat_id' => $chat_id];
+        $data['text'] = 'Mensaje: ' . $message;
+
+        return Request::sendMessage($data);
         
 
 
@@ -68,9 +66,5 @@ class MessageHandlerCommand extends SystemCommand
 
         return Request::emptyResponse();
 
-        } catch (TelegramException $e) {
-            // Log telegram errors
-            TelegramLog::error($e);
-        }
     }
 }
