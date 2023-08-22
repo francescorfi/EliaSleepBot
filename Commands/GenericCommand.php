@@ -55,7 +55,8 @@ class GenericCommand extends SystemCommand
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
-        $stmt->bind_param('s', '/' . $command);
+        $commandWithSlash = "/" . $command;
+        $stmt->bind_param('s', $commandWithSlash);
         $stmt->execute();
         $stmt->bind_result($message_id);
         $stmt->fetch();
