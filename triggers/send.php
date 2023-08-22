@@ -18,13 +18,12 @@ try {
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
         // Query the database for the chat_id and command
-        $stmt = $mysqli->prepare("SELECT s.chat_id, m.command FROM sends s INNER JOIN messages m ON s.message_id = m.id WHERE s.id = ?");
+        $stmt = $mysqli->prepare("SELECT s.chat_id, m.command, m.id as message_id FROM sends s INNER JOIN messages m ON s.message_id = m.id WHERE s.id = ?");
         $stmt->bind_param('s', $send_id);
         $stmt->execute();
-        $stmt->bind_result($chat_id, $command);
+        $stmt->bind_result($chat_id, $command, $message_id);
         $stmt->fetch();
         $stmt->close();
-        $mysqli->close();
 
         if ($chat_id && $command) {
             // Define the data to be sent
@@ -36,15 +35,23 @@ try {
             // Send message to the group
             $result = Request::sendMessage($data);
 
-            // Output success or error message
             if ($result->isOk()) {
                 TelegramLog::notice("Message with ID $send_id sent successfully");
+
+                // Insert event into the events table
+                $eventStmt = $mysqli->prepare("INSERT INTO events (chat_id, message_id) VALUES (?, ?)");
+                $eventStmt->bind_param('ss', $chat_id, $message_id);
+                $eventStmt->execute();
+                $eventStmt->close();
+                
             } else {
                 TelegramLog::notice("Message with ID $send_id was not sent");
             }
         } else {
             TelegramLog::notice("Message with ID $send_id does not exist in the database");
         }
+
+        $mysqli->close();
     } else {
         TelegramLog::notice("No send ID provided");
     }

@@ -50,9 +50,6 @@ class GenericCommand extends SystemCommand
         $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
 
-        
-        return $this->replyToChat("Mensaje procesado: " . $command);
-
         // Conectar usando mysqli
         $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
