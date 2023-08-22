@@ -18,6 +18,8 @@ class MessageHandlerCommand extends SystemCommand
 {
     protected $name = 'messagehandler';
     protected $description = 'Handle group messages';
+    protected $usage = '/handle';
+    protected $version = '1.0.0';
 
     public function execute(): ServerResponse
     {
