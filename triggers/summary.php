@@ -27,10 +27,24 @@ try {
 
         if ($analysis) {
             // Create the summary message
-            $message = "Resumen del análisis (Fecha: {$analysis['analysis_date']}):\n";
-            $message .= "Siestas durante el día: {$analysis['day_naps']}\n";
-            $message .= "Horas totales dormidas durante el día: {$analysis['total_hours_slept_day']}\n";
-            // ... add more fields here
+            $message = "**Resumen del día {$analysis['analysis_date']}**\n";
+            $message .= "Puntuación total: {$analysis['score']}\n";
+            $message .= "\n";
+            $message .= "**Sueño diurno:**\n";
+            $message .= "Número de siestas: {$analysis['day_naps']}\n";
+            $message .= "Horas dormidas durante el día: {$analysis['total_hours_slept_day']}\n";
+            $message .= "Despertar de la última siesta: {$analysis['last_nap_wakeup']}\n";
+            $message .= "Máximo tiempo despierta: {$analysis['max_awake_period']}\n";
+            $message .= "\n";
+            $message .= "**Sueño nocturno:**\n";
+            $message .= "Hora de acostarse: {$analysis['bedtime']}\n";
+            $message .= "Hora de dormirse: {$analysis['sleep_time']} (Conciliación: {$analysis['time_to_fall_asleep']} minutos)\n";
+            $message .= "Número de despertares: {$analysis['night_wakeups']}\n";
+            $message .= "Periodos largos de sueño: {$analysis['number_of_long_sleep_periods']}\n";
+            $message .= "Duración del periodo más largo: {$analysis['max_night_sleep_period']} horas\n";
+            $message .= "Duración del segundo periodo más largo: {$analysis['second_max_night_sleep_period']} horas\n";
+            $message .= "Número total de horas dormidas: {$analysis['total_hours_slept_night']} horas\n";
+            $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}";
 
             $data = [
                 'chat_id' => $chat_id,
