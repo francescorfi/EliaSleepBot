@@ -27,8 +27,9 @@ try {
 
         if ($analysis) {
             // Create the summary message
-            $message = "<b>Resumen del día {$analysis['analysis_date']}</b>\n";
-            $message .= "Puntuación total: " . round($analysis['score'],2) . "\n";
+            $dateObject = DateTime::createFromFormat('Y-m-d', $analysis['analysis_date']);
+            $message = "<b><u>Resumen del día " . $dateObject->format('d/m/Y') . "</u></b>\n";
+            $message .= "<b>Puntuación total:</b> " . round($analysis['score'],2) . "\n";
             $message .= "\n";
             $message .= "<b>Sueño diurno:</b>\n";
             $message .= "Número de siestas: {$analysis['day_naps']}\n";
