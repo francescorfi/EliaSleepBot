@@ -49,6 +49,7 @@ try {
             $data = [
                 'chat_id' => $chat_id,
                 'text'    => $message,
+                'parse_mode' => 'HTML'
             ];
 
             // Send summary message to the group
