@@ -50,9 +50,27 @@ class GenericCommand extends SystemCommand
         $message = $this->getMessage();
         $chat_id = $message->getChat()->getId();
         $command = $message->getCommand();
+        $chat_type = $message->getChat()->getType(); // Añadido para determinar el tipo de chat
 
         // Conectar usando mysqli
         $mysqli = new \mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    
+        // Verificar si es un chat privado
+        if ($chat_type == 'private') {
+            return Request::sendMessage(['chat_id' => $chat_id, 'text' => '¡Lo siento! Solo funciono en grupos, crea un grupo con el nombre de tu hijo/a y dalo de alta en eliasleep.com.']);
+        }
+    
+        // Verificar si el chat_id del grupo está en la tabla chats
+        $checkChatStmt = $mysqli->prepare("SELECT COUNT(*) FROM chats WHERE chat_id = ?");
+        $checkChatStmt->bind_param('s', $chat_id);
+        $checkChatStmt->execute();
+        $checkChatStmt->bind_result($count);
+        $checkChatStmt->fetch();
+        $checkChatStmt->close();
+    
+        if ($count == 0) {
+            return Request::sendMessage(['chat_id' => $chat_id, 'text' => 'Por favor, dirígete a eliasleep.com para registrar este chat y poder empezar a controlar las horas de sueño.']);
+        }
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
