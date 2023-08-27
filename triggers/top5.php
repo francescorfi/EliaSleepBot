@@ -64,7 +64,7 @@ try {
         $message .= "Hora de despertarse: " . gmdate("H:i", $metrics['avg_wakeup_time']) . " (Min: " . gmdate("H:i", $metrics['min_wakeup_time']) . ", Max: " . gmdate("H:i", $metrics['max_wakeup_time']) . ")\n";
         $message .= "Número de siestas: " . round($metrics['avg_day_naps'],1) . " (Min: {$metrics['min_day_naps']}, Max: {$metrics['max_day_naps']})\n";
         $message .= "Horas dormidas durante el día: " . round($metrics['avg_total_hours_slept_day'],1) . " horas (Min: " . round($metrics['min_total_hours_slept_day'],1) . ", Max: " . round($metrics['max_total_hours_slept_day'],1) . ")\n";
-        $message .= "Hora de despertar de la última siesta: " . gmdate("H:i", $metrics['avg_last_nap_wakeup']) . " (Min: " . gmdate("H:i", $metrics['min_last_nap_wakeup']) . ", Max: " . gmdate("H:i", $metrics['max_last_nap_wakeup']) . ")";
+        $message .= "Hora de despertar de la última siesta: " . gmdate("H:i", $metrics['avg_last_nap_wakeup']) . " (Min: " . gmdate("H:i", $metrics['min_last_nap_wakeup']) . ", Max: " . gmdate("H:i", $metrics['max_last_nap_wakeup']) . ")\n";
         $message .= "Hora de acostarse: " . gmdate("H:i", $metrics['avg_bedtime']) . " (Min: " . gmdate("H:i", $metrics['min_bedtime']) . ", Max: " . gmdate("H:i", $metrics['max_bedtime']) . ")\n";
         $message .= "Hora de dormirse: " . gmdate("H:i", $metrics['avg_sleep_time']) . " (Min: " . gmdate("H:i", $metrics['min_sleep_time']) . ", Max: " . gmdate("H:i", $metrics['max_sleep_time']) . ")\n";
 

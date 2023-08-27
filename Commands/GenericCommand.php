@@ -72,6 +72,10 @@ class GenericCommand extends SystemCommand
             return Request::sendMessage(['chat_id' => $chat_id, 'text' => 'Por favor, dirígete a eliasleep.com para registrar este chat y poder empezar a controlar las horas de sueño. Este es el ID que debes informar en la aplicación: ' . $chat_id]);
         }
 
+        if ($command == "top5") {
+            file_get_contents(TOP5_URL);
+        }
+
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
         $commandWithSlash = "/" . $command;
