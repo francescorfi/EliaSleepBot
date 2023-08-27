@@ -67,7 +67,7 @@ try {
             $message .= "Duración del periodo más largo: " . round($analysis['max_night_sleep_period'], 1) . " horas\n";
             $message .= "Duración del segundo periodo más largo: " . round($analysis['second_max_night_sleep_period'], 1) . " horas\n";
             $message .= "Número total de horas dormidas: " . round($analysis['total_hours_slept_night'],1) . " horas\n";
-            $message .= "Tiempo total despierta: " . round($analysis['total_awake_hours_night'],1) . " horas\n";
+            $message .= "Tiempo total despierta: " . round($analysis['total_minutes_awake_night'],1) . " minutos\n";
             $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}";
 
             if (!empty($awake_periods)) {
