@@ -69,7 +69,7 @@ class GenericmessageCommand extends SystemCommand
         $checkChatStmt->close();
     
         if ($count == 0) {
-            return Request::sendMessage(['chat_id' => $chat_id, 'text' => 'Por favor, dirígete a eliasleep.com para registrar este chat y poder empezar a controlar las horas de sueño.']);
+            return Request::sendMessage(['chat_id' => $chat_id, 'text' => '¡Hola! Por favor, dirígete a eliasleep.com para registrar este chat y poder empezar a controlar las horas de sueño. Este es el ID que debes informar en la aplicación: ' . $chat_id]);
         }
 
         /**

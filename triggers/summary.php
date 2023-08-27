@@ -13,6 +13,19 @@ try {
     // Get chat id from URL
     $chat_id = $_GET['id'] ?? null;
 
+    // Check for error parameter
+    $error = $_GET['error'] ?? null;
+
+    if ($error === 'true' && $chat_id !== null) {
+        $data = [
+            'chat_id' => $chat_id,
+            'text'    => 'Hay algún error en los datos, comprueba que hayas registrado correctamente todos los eventos de dormir y despertar.'
+        ];
+        Request::sendMessage($data);
+        http_response_code(200); // Respond with OK
+        exit(); // End the script execution
+    }
+
     if ($chat_id !== null) {
         // Connect to the database
         $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -24,6 +37,15 @@ try {
         $result = $stmt->get_result();
         $analysis = $result->fetch_assoc();
         $stmt->close();
+
+        $analysis_date = $analysis['analysis_date'];
+
+        $stmt2 = $mysqli->prepare("SELECT * FROM awake_periods WHERE chat_id = ? AND analysis_date = ?");
+        $stmt2->bind_param('ss', $chat_id, $analysis_date);
+        $stmt2->execute();
+        $result2 = $stmt2->get_result();
+        $awake_periods = $result2->fetch_assoc();
+        $stmt2->close();
 
         if ($analysis) {
             // Create the summary message
@@ -45,7 +67,28 @@ try {
             $message .= "Duración del periodo más largo: " . round($analysis['max_night_sleep_period'], 1) . " horas\n";
             $message .= "Duración del segundo periodo más largo: " . round($analysis['second_max_night_sleep_period'], 1) . " horas\n";
             $message .= "Número total de horas dormidas: " . round($analysis['total_hours_slept_night'],1) . " horas\n";
+            $message .= "Tiempo total despierta: " . round($analysis['total_awake_hours_night'],1) . " horas\n";
             $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}";
+
+            if (!empty($awake_periods)) {
+                $message .= "\n";
+                $message .= "<b>Resumen de los despertares:</b>\n";
+                $i = 1;
+                foreach ($awake_periods as $period) {
+                    if ($i > 1) {
+                        $message .= "\n";
+                    }
+                    $message .= "<b><u>Despertar " . $i . "</u></b>\n";
+                    $message .= "Hora: " . date("H:i", strtotime($period['start_time'])) . "\n";
+                    $message .= "Duración: " . round($analysis['duration_minutes'],0) . " minutos\n";
+                    if ($period['feedings_count'] == 1) {
+                        $message .= "Incluye 1 toma\n";
+                    } else if ($period['feedings_count'] > 1) {
+                        $message .= "Incluye " . $period['feedings_count'] . "tomas\n";
+                    }
+                    $i++;
+                }
+            }
 
             $data = [
                 'chat_id' => $chat_id,
