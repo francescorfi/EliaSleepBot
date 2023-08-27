@@ -19,36 +19,35 @@ try {
 
         // Prepare the query
         $sql = "
-            WITH Top5 AS (
-                SELECT * 
-                FROM analysis
-                WHERE chat_id = ? AND analysis_date >= CURRENT_DATE - INTERVAL '1 month' 
-                ORDER BY score DESC 
-                LIMIT 5
-            )
-
             SELECT 
                 AVG(day_naps) as avg_day_naps, 
                 MIN(day_naps) as min_day_naps, 
                 MAX(day_naps) as max_day_naps,
-
+                
                 AVG(total_hours_slept_day) as avg_total_hours_slept_day, 
                 MIN(total_hours_slept_day) as min_total_hours_slept_day, 
                 MAX(total_hours_slept_day) as max_total_hours_slept_day,
-
+                
                 AVG(TIME_TO_SEC(bedtime)) as avg_bedtime, 
                 MIN(TIME_TO_SEC(bedtime)) as min_bedtime, 
                 MAX(TIME_TO_SEC(bedtime)) as max_bedtime,
-
+                
                 AVG(TIME_TO_SEC(sleep_time)) as avg_sleep_time, 
                 MIN(TIME_TO_SEC(sleep_time)) as min_sleep_time, 
                 MAX(TIME_TO_SEC(sleep_time)) as max_sleep_time,
-
+                
                 AVG(TIME_TO_SEC(last_nap_wakeup)) as avg_last_nap_wakeup, 
                 MIN(TIME_TO_SEC(last_nap_wakeup)) as min_last_nap_wakeup, 
                 MAX(TIME_TO_SEC(last_nap_wakeup)) as max_last_nap_wakeup
-
-            FROM Top5
+            
+            FROM (
+                SELECT * 
+                FROM analysis
+                WHERE chat_id = ? AND analysis_date >= CURRENT_DATE - INTERVAL 1 MONTH 
+                ORDER BY score DESC 
+                LIMIT 5
+            ) AS Top5;
+    
         ";
 
         $stmt = $mysqli->prepare($sql);
