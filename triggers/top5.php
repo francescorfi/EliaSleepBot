@@ -20,6 +20,10 @@ try {
         // Prepare the query
         $sql = "
             SELECT 
+                AVG(TIME_TO_SEC(wakeup_time)) as avg_wakeup_time, 
+                MIN(TIME_TO_SEC(wakeup_time)) as min_wakeup_time, 
+                MAX(TIME_TO_SEC(wakeup_time)) as max_wakeup_time,
+
                 AVG(day_naps) as avg_day_naps, 
                 MIN(day_naps) as min_day_naps, 
                 MAX(day_naps) as max_day_naps,
@@ -56,12 +60,13 @@ try {
         $metrics = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
-        $message = "<b><u>Resumen del Mes</u></b>\n";
-        $message .= "Número promedio de siestas: " . round($metrics['avg_day_naps'],1) . " (Min: {$metrics['min_day_naps']}, Max: {$metrics['max_day_naps']})\n";
-        $message .= "Horas promedio dormidas durante el día: " . round($metrics['avg_total_hours_slept_day'],1) . " horas (Min: " . round($metrics['min_total_hours_slept_day'],1) . ", Max: " . round($metrics['max_total_hours_slept_day'],1) . ")\n";
-        $message .= "Hora promedio de acostarse: " . gmdate("H:i", $metrics['avg_bedtime']) . " (Min: " . gmdate("H:i", $metrics['min_bedtime']) . ", Max: " . gmdate("H:i", $metrics['max_bedtime']) . ")\n";
-        $message .= "Hora promedio de dormirse: " . gmdate("H:i", $metrics['avg_sleep_time']) . " (Min: " . gmdate("H:i", $metrics['min_sleep_time']) . ", Max: " . gmdate("H:i", $metrics['max_sleep_time']) . ")\n";
-        $message .= "Hora promedio de despertar de la última siesta: " . gmdate("H:i", $metrics['avg_last_nap_wakeup']) . " (Min: " . gmdate("H:i", $metrics['min_last_nap_wakeup']) . ", Max: " . gmdate("H:i", $metrics['max_last_nap_wakeup']) . ")";
+        $message = "<b><u>Las 5 mejores noches de los últimos 30 días</u></b>\n";
+        $message .= "Hora de despertarse: " . gmdate("H:i", $metrics['avg_wakeup_time']) . " (Min: " . gmdate("H:i", $metrics['min_wakeup_time']) . ", Max: " . gmdate("H:i", $metrics['max_wakeup_time']) . ")\n";
+        $message .= "Número de siestas: " . round($metrics['avg_day_naps'],1) . " (Min: {$metrics['min_day_naps']}, Max: {$metrics['max_day_naps']})\n";
+        $message .= "Horas dormidas durante el día: " . round($metrics['avg_total_hours_slept_day'],1) . " horas (Min: " . round($metrics['min_total_hours_slept_day'],1) . ", Max: " . round($metrics['max_total_hours_slept_day'],1) . ")\n";
+        $message .= "Hora de despertar de la última siesta: " . gmdate("H:i", $metrics['avg_last_nap_wakeup']) . " (Min: " . gmdate("H:i", $metrics['min_last_nap_wakeup']) . ", Max: " . gmdate("H:i", $metrics['max_last_nap_wakeup']) . ")";
+        $message .= "Hora de acostarse: " . gmdate("H:i", $metrics['avg_bedtime']) . " (Min: " . gmdate("H:i", $metrics['min_bedtime']) . ", Max: " . gmdate("H:i", $metrics['max_bedtime']) . ")\n";
+        $message .= "Hora de dormirse: " . gmdate("H:i", $metrics['avg_sleep_time']) . " (Min: " . gmdate("H:i", $metrics['min_sleep_time']) . ", Max: " . gmdate("H:i", $metrics['max_sleep_time']) . ")\n";
 
         $data = [
             'chat_id' => $chat_id,
