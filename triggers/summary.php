@@ -44,7 +44,7 @@ try {
         $stmt2->bind_param('ss', $chat_id, $analysis_date);
         $stmt2->execute();
         $result2 = $stmt2->get_result();
-        $awake_periods = $result2->fetch_assoc();
+        $awake_periods = $result2->fetch_all(MYSQLI_ASSOC);
         $stmt2->close();
 
         if ($analysis) {
@@ -71,7 +71,7 @@ try {
             $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}";
 
             if (!empty($awake_periods)) {
-                $message .= "\n";
+                $message .= "\n\n";
                 $message .= "<b>Resumen de los despertares:</b>\n";
                 $i = 1;
                 foreach ($awake_periods as $period) {
@@ -80,11 +80,11 @@ try {
                     }
                     $message .= "<b><u>Despertar " . $i . "</u></b>\n";
                     $message .= "Hora: " . date("H:i", strtotime($period['start_time'])) . "\n";
-                    $message .= "Duración: " . round($analysis['duration_minutes'],0) . " minutos\n";
+                    $message .= "Duración: " . round($period['duration_minutes'],0) . " minutos\n";
                     if ($period['feedings_count'] == 1) {
                         $message .= "Incluye 1 toma\n";
                     } else if ($period['feedings_count'] > 1) {
-                        $message .= "Incluye " . $period['feedings_count'] . "tomas\n";
+                        $message .= "Incluye " . $period['feedings_count'] . " tomas\n";
                     }
                     $i++;
                 }
