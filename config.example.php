@@ -5,7 +5,7 @@ define('DB_USER', 'your_username');
 define('DB_PASS', 'your_password');
 define('DB_NAME', 'your_database');
 
-define('TOP5_URL', 'url to top5 trigger');
+define('TOP5_URL', 'https://bots.francescorfi.com/EliaSleepBot/triggers/top5.php?id=');
 
 $settings = [
     'api_key'      => 'YOUR_BOT_API_KEY',

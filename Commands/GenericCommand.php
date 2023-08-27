@@ -73,7 +73,7 @@ class GenericCommand extends SystemCommand
         }
 
         if ($command == "top5") {
-            file_get_contents(TOP5_URL);
+            file_get_contents(TOP5_URL . $chat_id);
         }
 
         // Si el mensaje es un comando
