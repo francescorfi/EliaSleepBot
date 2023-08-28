@@ -51,7 +51,7 @@ try {
             // Create the summary message
             $dateObject = DateTime::createFromFormat('Y-m-d', $analysis['analysis_date']);
             $message = "<b><u>Resumen del día " . $dateObject->format('d/m/Y') . "</u></b>\n";
-            $message .= "<b>Puntuación total:</b> " . round($analysis['score'],2) . "\n";
+            $message .= "<b>Puntuación total:</b> " . round($analysis['score'],2) . "/10\n";
             $message .= "\n";
             $message .= "<b>Sueño diurno:</b>\n";
             $message .= "Número de siestas: {$analysis['day_naps']}\n";
