@@ -14,9 +14,7 @@ try {
     $chat_id = $_GET['id'] ?? null;
 
     // Check for error parameter
-    $error = $_GET['error'] ?? null;
-
-    if ($error === 'true' && $chat_id !== null) {
+    if (isset($_GET['error']) && $chat_id !== null) {
         $data = [
             'chat_id' => $chat_id,
             'text'    => 'Hay algún error en los datos, comprueba que hayas registrado correctamente todos los eventos de dormir y despertar.'
