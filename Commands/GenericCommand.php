@@ -83,19 +83,29 @@ class GenericCommand extends SystemCommand
         }
 
         if ($command == "horas") {
+            $logFile = '/home/shuvkktd/bots.francescorfi.com/EliaSleepBot/log.txt';
+            
+            file_put_contents($logFile, "Comenzando el comando /horas\n", FILE_APPEND);
+            
             // Obtén la fecha y hora actuales
             $now = new DateTime();
             
             // Establece la hora a las 8 de la mañana
             $now->setTime(8, 0);
             
+            file_put_contents($logFile, "Hora actual: " . $now->format('Y-m-d H:i:s') . "\n", FILE_APPEND);
+            
             // Prepara la consulta SQL
             $stmt = $mysqli->prepare("SELECT message_id, datetime FROM events WHERE (message_id = 2 OR message_id = 3) AND datetime >= ? AND chat_id = ? ORDER BY datetime");
             $stmt->bind_param('ss', $now->format('Y-m-d H:i:s'), $chat_id);
             
+            file_put_contents($logFile, "Consulta SQL preparada\n", FILE_APPEND);
+            
             // Ejecuta la consulta
             $stmt->execute();
             $stmt->bind_result($message_id, $datetime);
+            
+            file_put_contents($logFile, "Consulta SQL ejecutada\n", FILE_APPEND);
             
             // Inicializa variables
             $lastDatetime = null;
@@ -116,6 +126,8 @@ class GenericCommand extends SystemCommand
                 $lastMessageId = $message_id;
             }
             
+            file_put_contents($logFile, "Resultados procesados\n", FILE_APPEND);
+            
             $stmt->close();
             
             // Envía la respuesta
@@ -125,6 +137,7 @@ class GenericCommand extends SystemCommand
             ];
             return Request::sendMessage($data);
         }
+        
 
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
