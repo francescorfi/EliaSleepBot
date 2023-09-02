@@ -109,22 +109,34 @@ class GenericCommand extends SystemCommand
             
             // Inicializa variables
             $lastDatetime = null;
-            $totalHours = 0;
-            
+            $totalMinutes = 0;
+
             // Procesa los resultados
             while ($stmt->fetch()) {
                 $currentDatetime = new DateTime($datetime);
-                
+
                 // Si el último datetime no es nulo y el mensaje actual es un "despertar" (message_id = 3) y el último mensaje fue un "dormir" (message_id = 2),
-                // entonces calcula la diferencia de tiempo y suma al total de horas
+                // entonces calcula la diferencia de tiempo y suma al total de minutos
                 if ($lastDatetime !== null && $message_id == 3 && $lastMessageId == 2) {
                     $interval = $lastDatetime->diff($currentDatetime);
-                    $totalHours += $interval->h + $interval->days * 24;
+                    $totalMinutes += $interval->i + $interval->h * 60 + $interval->days * 24 * 60;
                 }
-                
+
                 $lastDatetime = $currentDatetime;
                 $lastMessageId = $message_id;
             }
+
+            // Si el último evento fue un "dormir", entonces calcula el tiempo hasta ahora
+            $endMessage = '';
+            if ($lastMessageId == 2) {
+                $interval = $lastDatetime->diff(new DateTime());
+                $totalMinutes += $interval->i + $interval->h * 60 + $interval->days * 24 * 60;
+                $endMessage += ' Actualmente está durmiendo 😴😴';
+            }
+
+            // Calcula horas y minutos
+            $totalHours = floor($totalMinutes / 60);
+            $remainingMinutes = $totalMinutes % 60;
             
             file_put_contents($logFile, "Resultados procesados\n", FILE_APPEND);
             
@@ -133,7 +145,7 @@ class GenericCommand extends SystemCommand
             // Envía la respuesta
             $data = [
                 'chat_id' => $chat_id,
-                'text'    => 'Total de horas dormidas desde las 8 de la mañana: ' . $totalHours,
+                'text'    => 'Total de tiempo dormido desde las 8 de la mañana: ' . $totalHours . ' horas y ' . $remainingMinutes . ' minutos.' . $endMessage,
             ];
             return Request::sendMessage($data);
         }
