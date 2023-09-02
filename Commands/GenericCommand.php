@@ -115,9 +115,9 @@ class GenericCommand extends SystemCommand
             while ($stmt->fetch()) {
                 $currentDatetime = new DateTime($datetime);
 
-                // Si el último datetime no es nulo y el mensaje actual es un "despertar" (message_id = 3) y el último mensaje fue un "dormir" (message_id = 2),
+                // Si el último datetime no es nulo y el mensaje actual es un "despertar" (message_id = 2) y el último mensaje fue un "dormir" (message_id = 3),
                 // entonces calcula la diferencia de tiempo y suma al total de minutos
-                if ($lastDatetime !== null && $message_id == 3 && $lastMessageId == 2) {
+                if ($lastDatetime !== null && $message_id == 2 && $lastMessageId == 3) {
                     $interval = $lastDatetime->diff($currentDatetime);
                     $totalMinutes += $interval->i + $interval->h * 60 + $interval->days * 24 * 60;
                 }
