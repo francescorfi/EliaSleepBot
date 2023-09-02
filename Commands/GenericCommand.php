@@ -110,6 +110,7 @@ class GenericCommand extends SystemCommand
                 // Inicializa variables
                 $lastDatetime = null;
                 $totalHours = 0;
+                $lastMessageId = null;
                 
                 // Procesa los resultados
                 while ($stmt->fetch()) {
