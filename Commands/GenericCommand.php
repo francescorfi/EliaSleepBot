@@ -88,6 +88,7 @@ class GenericCommand extends SystemCommand
             
             try {
                 // Obtén la fecha y hora actuales
+                file_put_contents($logFile, "Cojones\n", FILE_APPEND);
                 $now = new DateTime();
                 
                 file_put_contents($logFile, "Hora actual: " . $now->format('Y-m-d H:i:s') . "\n", FILE_APPEND);
