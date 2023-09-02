@@ -131,7 +131,7 @@ class GenericCommand extends SystemCommand
             if ($lastMessageId == 3) {
                 $interval = $lastDatetime->diff(new DateTime());
                 $totalMinutes += $interval->i + $interval->h * 60 + $interval->days * 24 * 60;
-                $endMessage += ' Actualmente está durmiendo \xF0\x9F\x98\xB4';
+                $endMessage += ' Actualmente está durmiendo.';
             }
 
             // Calcula horas y minutos
