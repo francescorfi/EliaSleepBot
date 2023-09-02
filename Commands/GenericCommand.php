@@ -76,6 +76,10 @@ class GenericCommand extends SystemCommand
             file_get_contents(TOP5_URL . $chat_id);
         }
 
+        if ($command == "resumen") {
+            shell_exec('/home/shuvkktd/virtualenv/repositories/EliaSleepAnalytics/3.9/bin/python /home/shuvkktd/repositories/EliaSleepAnalytics/script.py');
+        }
+
         // Si el mensaje es un comando
         $stmt = $mysqli->prepare("SELECT id FROM messages WHERE command = ?");
         $commandWithSlash = "/" . $command;
