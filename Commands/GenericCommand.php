@@ -90,6 +90,8 @@ class GenericCommand extends SystemCommand
                 // Obtén la fecha y hora actuales
                 $now = new DateTime();
                 
+                file_put_contents($logFile, "Hora actual: " . $now->format('Y-m-d H:i:s') . "\n", FILE_APPEND);
+                
                 // Establece la hora a las 8 de la mañana
                 $now->setTime(8, 0);
                 
