@@ -128,7 +128,7 @@ class GenericCommand extends SystemCommand
 
             // Si el último evento fue un "dormir", entonces calcula el tiempo hasta ahora
             $endMessage = '';
-            if ($lastMessageId == 2) {
+            if ($lastMessageId == 3) {
                 $interval = $lastDatetime->diff(new DateTime());
                 $totalMinutes += $interval->i + $interval->h * 60 + $interval->days * 24 * 60;
                 $endMessage += ' Actualmente está durmiendo 😴😴';
