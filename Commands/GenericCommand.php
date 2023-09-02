@@ -81,61 +81,66 @@ class GenericCommand extends SystemCommand
         }
 
 
-    if ($command == "horas") {
-        $logFile = '/home/shuvkktd/bots.francescorfi.com/EliaSleepBot/log.txt';
-        
-        file_put_contents($logFile, "Comenzando el comando /horas\n", FILE_APPEND);
-        
-        // Obtén la fecha y hora actuales
-        $now = new DateTime();
-        
-        // Establece la hora a las 8 de la mañana
-        $now->setTime(8, 0);
-        
-        file_put_contents($logFile, "Hora actual: " . $now->format('Y-m-d H:i:s') . "\n", FILE_APPEND);
-        
-        // Prepara la consulta SQL
-        $stmt = $mysqli->prepare("SELECT message_id, datetime FROM events WHERE (message_id = 2 OR message_id = 3) AND datetime >= ? AND chat_id = ? ORDER BY datetime");
-        $stmt->bind_param('ss', $now->format('Y-m-d H:i:s'), $chat_id);
-        
-        file_put_contents($logFile, "Consulta SQL preparada\n", FILE_APPEND);
-        
-        // Ejecuta la consulta
-        $stmt->execute();
-        $stmt->bind_result($message_id, $datetime);
-        
-        file_put_contents($logFile, "Consulta SQL ejecutada\n", FILE_APPEND);
-        
-        // Inicializa variables
-        $lastDatetime = null;
-        $totalHours = 0;
-        
-        // Procesa los resultados
-        while ($stmt->fetch()) {
-            $currentDatetime = new DateTime($datetime);
+        if ($command == "horas") {
+            $logFile = '/home/shuvkktd/bots.francescorfi.com/EliaSleepBot/log.txt';
             
-            // Si el último datetime no es nulo y el mensaje actual es un "despertar" (message_id = 3) y el último mensaje fue un "dormir" (message_id = 2),
-            // entonces calcula la diferencia de tiempo y suma al total de horas
-            if ($lastDatetime !== null && $message_id == 3 && $lastMessageId == 2) {
-                $interval = $lastDatetime->diff($currentDatetime);
-                $totalHours += $interval->h + $interval->days * 24;
+            file_put_contents($logFile, "Comenzando el comando /horas\n", FILE_APPEND);
+            
+            try {
+                // Obtén la fecha y hora actuales
+                $now = new DateTime();
+                
+                // Establece la hora a las 8 de la mañana
+                $now->setTime(8, 0);
+                
+                file_put_contents($logFile, "Hora actual: " . $now->format('Y-m-d H:i:s') . "\n", FILE_APPEND);
+                
+                // Prepara la consulta SQL
+                $stmt = $mysqli->prepare("SELECT message_id, datetime FROM events WHERE (message_id = 2 OR message_id = 3) AND datetime >= ? AND chat_id = ? ORDER BY datetime");
+                $stmt->bind_param('ss', $now->format('Y-m-d H:i:s'), $chat_id);
+                
+                file_put_contents($logFile, "Consulta SQL preparada\n", FILE_APPEND);
+                
+                // Ejecuta la consulta
+                $stmt->execute();
+                $stmt->bind_result($message_id, $datetime);
+                
+                file_put_contents($logFile, "Consulta SQL ejecutada\n", FILE_APPEND);
+                
+                // Inicializa variables
+                $lastDatetime = null;
+                $totalHours = 0;
+                
+                // Procesa los resultados
+                while ($stmt->fetch()) {
+                    $currentDatetime = new DateTime($datetime);
+                    
+                    // Si el último datetime no es nulo y el mensaje actual es un "despertar" (message_id = 3) y el último mensaje fue un "dormir" (message_id = 2),
+                    // entonces calcula la diferencia de tiempo y suma al total de horas
+                    if ($lastDatetime !== null && $message_id == 3 && $lastMessageId == 2) {
+                        $interval = $lastDatetime->diff($currentDatetime);
+                        $totalHours += $interval->h + $interval->days * 24;
+                    }
+                    
+                    $lastDatetime = $currentDatetime;
+                    $lastMessageId = $message_id;
+                }
+                
+                file_put_contents($logFile, "Resultados procesados\n", FILE_APPEND);
+                
+                $stmt->close();
+                
+                // Envía la respuesta
+                $data = [
+                    'chat_id' => $chat_id,
+                    'text'    => 'Total de horas dormidas desde las 8 de la mañana: ' . $totalHours,
+                ];
+                return Request::sendMessage($data);
+            } catch (Exception $e) {
+                file_put_contents($logFile, "Error: " . $e->getMessage() . "\n", FILE_APPEND);
             }
-            
-            $lastDatetime = $currentDatetime;
-            $lastMessageId = $message_id;
         }
         
-        file_put_contents($logFile, "Resultados procesados\n", FILE_APPEND);
-        
-        $stmt->close();
-        
-        // Envía la respuesta
-        $data = [
-            'chat_id' => $chat_id,
-            'text'    => 'Total de horas dormidas desde las 8 de la mañana: ' . $totalHours,
-        ];
-        return Request::sendMessage($data);
-    }
 
         
 
