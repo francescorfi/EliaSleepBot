@@ -14,7 +14,7 @@ try {
     $chat_id = $_GET['id'] ?? null;
 
     // Check for error parameter
-    if (isset($_GET['error']) && $chat_id !== null) {
+    if (isset($_GET['errors']) && $chat_id !== null) {
         $data = [
             'chat_id' => $chat_id,
             'text'    => 'Hay algún error en los datos, comprueba que hayas registrado correctamente todos los eventos de dormir y despertar.'
@@ -45,11 +45,20 @@ try {
         $awake_periods = $result2->fetch_all(MYSQLI_ASSOC);
         $stmt2->close();
 
+        $stmt3 = $mysqli->prepare("SELECT * FROM naps WHERE chat_id = ? AND analysis_date = ?");
+        $stmt3->bind_param('ss', $chat_id, $analysis_date);
+        $stmt3->execute();
+        $result3 = $stmt3->get_result();
+        $naps = $result3->fetch_all(MYSQLI_ASSOC);
+        $stmt3->close();
+
         if ($analysis) {
             // Create the summary message
             $dateObject = DateTime::createFromFormat('Y-m-d', $analysis['analysis_date']);
             $message = "<b><u>Resumen del día " . $dateObject->format('d/m/Y') . "</u></b>\n";
             $message .= "<b>Puntuación total:</b> " . round($analysis['score'],2) . "/10\n";
+            $message .= "\n";
+            $message .= "Despertar: " . date("H:i", strtotime($analysis['wakeup_time'])) . "\n";
             $message .= "\n";
             $message .= "<b>Sueño diurno:</b>\n";
             $message .= "Número de siestas: {$analysis['day_naps']}\n";
@@ -66,7 +75,38 @@ try {
             $message .= "Duración del segundo periodo más largo: " . round($analysis['second_max_night_sleep_period'], 1) . " horas\n";
             $message .= "Número total de horas dormidas: " . round($analysis['total_hours_slept_night'],1) . " horas\n";
             $message .= "Tiempo total despierta: " . round($analysis['total_minutes_awake_night'],1) . " minutos\n";
-            $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}";
+            $message .= "Número de tomas: {$analysis['number_of_breastfeeding_events']}\n";
+            $message .= "Hora de despertar: " . date("H:i", strtotime($analysis['last_wakeup_time']));
+
+            if (!empty($naps)) {
+                $message .= "\n\n";
+                $message .= "<b>Resumen de las siestas:</b>\n";
+                $i = 1;
+                foreach ($naps as $nap) {
+                    $hours = floor($nap['duration_hours']);
+                    $minutes = round(($nap['duration_hours'] - $hours) * 60);
+
+                    $durationString = "";
+                    if ($hours > 0) {
+                        $durationString .= $hours . " horas";
+                    }
+                    if ($minutes > 0) {
+                        if ($hours > 0) {
+                            $durationString .= " y ";
+                        }
+                        $durationString .= $minutes . " minutos";
+                    }
+                    if ($i > 1) {
+                        $message .= "\n";
+                    }
+                    $message .= "<b><u>Siesta " . $i . "</u></b>\n";
+                    $message .= "Dormir: " . date("H:i", strtotime($nap['start_time'])) . "\n";
+                    $message .= "Despertar: " . date("H:i", strtotime($nap['end_time'])) . "\n";
+                    $message .= "Duración real: " . $durationString . "\n";
+                    $message .= "Despertares: " . $nap['num_wakeups'];
+                    $i++;
+                }
+            }
 
             if (!empty($awake_periods)) {
                 $message .= "\n\n";
