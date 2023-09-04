@@ -103,7 +103,7 @@ try {
                     $message .= "Dormir: " . date("H:i", strtotime($nap['start_time'])) . "\n";
                     $message .= "Despertar: " . date("H:i", strtotime($nap['end_time'])) . "\n";
                     $message .= "Duración real: " . $durationString . "\n";
-                    $message .= "Despertares: " . $nap['num_wakeups'];
+                    $message .= "Despertares: " . $nap['num_wakeups'] . "\n";
                     $i++;
                 }
             }
